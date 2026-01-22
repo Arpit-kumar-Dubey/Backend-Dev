@@ -1,4 +1,9 @@
-const fileOps = require("./Exercise1");
+// const fileOps = require("./Exercise1");
+//fileOps.readFile();
+//fileOps.countWords();
+const stringUtils = require("./Exercise2");
 
-fileOps.readFile();
-fileOps.countWords();
+console.log(stringUtils.capitalize("hello world"));
+console.log(stringUtils.reverseString("nodejs"));
+console.log("Vowels:", stringUtils.countVowels("JavaScript"));
+
