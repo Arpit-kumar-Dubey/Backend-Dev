@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add User</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h2>Add Employee</h2>
+
+<form action="/add" method="POST">
+  <input type="text" name="name" placeholder="Name" required>
+
+  <select name="gender" required>
+    <option value="">Select Gender</option>
+    <option>Male</option>
+    <option>Female</option>
+  </select>
+
+  <input type="text" name="department" placeholder="Department" required>
+  <input type="number" name="salary" placeholder="Salary" required>
+  <input type="text" name="startDate" placeholder="Start Date" required>
+
+  <button type="submit">Submit</button>
+</form>
+
+</body>
+</html>

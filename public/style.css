@@ -1,0 +1,21 @@
+body {
+  font-family: Arial;
+  padding: 40px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.btn {
+  padding: 10px;
+  background: green;
+  color: white;
+  text-decoration: none;
+}

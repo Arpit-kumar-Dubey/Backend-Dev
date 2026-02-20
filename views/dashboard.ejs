@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Employee Dashboard</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h1>Employee Payroll Dashboard</h1>
+
+<a href="/add" class="btn">+ Add User</a>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Gender</th>
+    <th>Department</th>
+    <th>Salary</th>
+    <th>Start Date</th>
+    <th>Actions</th>
+  </tr>
+
+  <% users.forEach(user => { %>
+    <tr>
+      <td><%= user.name %></td>
+      <td><%= user.gender %></td>
+      <td><%= user.department %></td>
+      <td>₹ <%= user.salary %></td>
+      <td><%= user.startDate %></td>
+      <td>
+        <a href="/edit/<%= user.id %>">Edit</a>
+        <a href="/delete/<%= user.id %>">Delete</a>
+      </td>
+    </tr>
+  <% }) %>
+
+</table>
+
+</body>
+</html>

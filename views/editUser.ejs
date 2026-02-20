@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit User</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<h2>Edit Employee</h2>
+
+<form action="/update/<%= user.id %>" method="POST">
+  <input type="text" name="name" value="<%= user.name %>">
+
+  <select name="gender">
+    <option <%= user.gender === 'Male' ? 'selected' : '' %>>Male</option>
+    <option <%= user.gender === 'Female' ? 'selected' : '' %>>Female</option>
+  </select>
+
+  <input type="text" name="department" value="<%= user.department %>">
+  <input type="number" name="salary" value="<%= user.salary %>">
+  <input type="text" name="startDate" value="<%= user.startDate %>">
+
+  <button type="submit">Update</button>
+</form>
+
+</body>
+</html>
