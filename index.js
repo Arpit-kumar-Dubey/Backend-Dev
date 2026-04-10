@@ -52,14 +52,9 @@ app.use(session({
     cookie: { httpOnly: true, maxAge: 1000 * 60 * 30 }
 }));
 
-// --- Routes (Linking Everything) ---
-
-// 1. Home / Login Page
 app.get('/', (req, res) => {
     res.render('login', { error: null });
 });
-
-// 2. Login Logic
 app.post('/login', loginLimiter, (req, res) => {
     const { user, pass } = req.body;
     if (user === 'admin' && pass === '123') {
@@ -69,30 +64,24 @@ app.post('/login', loginLimiter, (req, res) => {
         res.send("Login Failed! <a href='/'>Try again</a>");
     }
 });
-
-// 3. Search Page (Injection Protection)
 app.get('/search', async (req, res) => {
     if (!req.session.role) return res.redirect('/'); 
     
     let results = [];
     if (req.query.q) {
-        // Task 2: Forced string conversion to prevent NoSQL Injection
+       
         results = await Product.find({ name: String(req.query.q) });
     }
     res.render('search', { products: results });
 });
-
-// 4. Review Page (XSS Protection)
 app.get('/reviews', (req, res) => {
     if (!req.session.role) return res.redirect('/');
     res.render('reviews', { cleanContent: null });
 });
-
 app.post('/review', (req, res) => {
     const rawReview = req.body.comment;
-    // Task 3: Sanitize input
+   
     const sanitized = DOMPurify.sanitize(rawReview);
     res.render('reviews', { cleanContent: sanitized });
 });
-
 app.listen(3000, () => console.log('Server started on http://localhost:3000'));
