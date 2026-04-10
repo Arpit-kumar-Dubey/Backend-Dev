@@ -1,0 +1,98 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const { JSDOM } = require('jsdom');
+const createDOMPurify = require('dompurify');
+
+const app = express();
+
+// --- Setup ---
+app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended: true })); 
+const window = new JSDOM('').window;
+const DOMPurify = createDOMPurify(window);
+
+// --- Database Connection ---
+mongoose.connect('mongodb://127.0.0.1:27017/shopeasy')
+    .then(() => console.log("ShopEasy Database Connected!"))
+    .catch(err => console.log("DB Connection Error:", err));
+
+// Product Model (For Task 2)
+const Product = mongoose.model('Product', new mongoose.Schema({ 
+    name: String, 
+    price: Number 
+}));
+
+// --- Security Middleware ---
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            "default-src": ["'self'"],
+            "script-src": ["'self'", "https://www.youtube.com"],
+            "img-src": ["'self'", "https://cdn.shopeasy.com"],
+            "frame-src": ["'self'", "https://www.youtube.com"]
+        },
+    },
+}));
+
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    message: "Too many login attempts. Please wait 15 minutes."
+});
+
+app.use(session({
+    secret: 'shopeasy_secret_key',
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/shopeasy' }),
+    cookie: { httpOnly: true, maxAge: 1000 * 60 * 30 }
+}));
+
+// --- Routes (Linking Everything) ---
+
+// 1. Home / Login Page
+app.get('/', (req, res) => {
+    res.render('login', { error: null });
+});
+
+// 2. Login Logic
+app.post('/login', loginLimiter, (req, res) => {
+    const { user, pass } = req.body;
+    if (user === 'admin' && pass === '123') {
+        req.session.role = 'admin';
+        res.redirect('/search'); 
+    } else {
+        res.send("Login Failed! <a href='/'>Try again</a>");
+    }
+});
+
+// 3. Search Page (Injection Protection)
+app.get('/search', async (req, res) => {
+    if (!req.session.role) return res.redirect('/'); 
+    
+    let results = [];
+    if (req.query.q) {
+        // Task 2: Forced string conversion to prevent NoSQL Injection
+        results = await Product.find({ name: String(req.query.q) });
+    }
+    res.render('search', { products: results });
+});
+
+// 4. Review Page (XSS Protection)
+app.get('/reviews', (req, res) => {
+    if (!req.session.role) return res.redirect('/');
+    res.render('reviews', { cleanContent: null });
+});
+
+app.post('/review', (req, res) => {
+    const rawReview = req.body.comment;
+    // Task 3: Sanitize input
+    const sanitized = DOMPurify.sanitize(rawReview);
+    res.render('reviews', { cleanContent: sanitized });
+});
+
+app.listen(3000, () => console.log('Server started on http://localhost:3000'));
