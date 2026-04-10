@@ -8,25 +8,18 @@ const { JSDOM } = require('jsdom');
 const createDOMPurify = require('dompurify');
 
 const app = express();
-
-// --- Setup ---
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true })); 
 const window = new JSDOM('').window;
 const DOMPurify = createDOMPurify(window);
 
-// --- Database Connection ---
 mongoose.connect('mongodb://127.0.0.1:27017/shopeasy')
     .then(() => console.log("ShopEasy Database Connected!"))
     .catch(err => console.log("DB Connection Error:", err));
-
-// Product Model (For Task 2)
 const Product = mongoose.model('Product', new mongoose.Schema({ 
     name: String, 
     price: Number 
 }));
-
-// --- Security Middleware ---
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
@@ -43,7 +36,6 @@ const loginLimiter = rateLimit({
     max: 5,
     message: "Too many login attempts. Please wait 15 minutes."
 });
-
 app.use(session({
     secret: 'shopeasy_secret_key',
     resave: false,
@@ -51,7 +43,6 @@ app.use(session({
     store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/shopeasy' }),
     cookie: { httpOnly: true, maxAge: 1000 * 60 * 30 }
 }));
-
 app.get('/', (req, res) => {
     res.render('login', { error: null });
 });
