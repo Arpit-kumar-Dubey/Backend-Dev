@@ -1,0 +1,107 @@
+1. Key Differences between SQL and NoSQL Databases
+ SQL (Relational Databases)
+
+Examples:
+
+MySQL
+ NoSQL (Non-relational Databases)
+
+Examples:
+
+MongoDB
+Cassandra
+ Differences:
+Feature	SQL	NoSQL
+Structure	Tables (rows & columns)	Flexible (JSON-like docs)
+Schema	Fixed schema	Dynamic schema
+Scaling	Vertical	Horizontal
+Relationships	Strong (joins)	Weak / handled manually
+Query Language	SQL	Varies (MongoDB query, etc.)
+ Example:
+
+SQL Table:
+
+id | name | age
+1  | John | 20
+
+MongoDB Document:
+
+{
+  "name": "John",
+  "age": 20,
+  "courses": ["CS101", "CS102"]
+}
+2. CAP Theorem
+ CAP stands for:
+C → Consistency (same data everywhere)
+A → Availability (system always responds)
+P → Partition Tolerance (works despite network failures)
+Statement:
+
+A distributed system can guarantee only 2 out of 3 properties at a time.
+
+ Why not all three?
+
+Because network partitions are unavoidable in distributed systems.
+
+ When a partition occurs:
+
+You must choose:
+Consistency (C) → may reject requests (lose availability)
+Availability (A) → may return outdated data (lose consistency)
+Example:
+MongoDB → favors AP (Availability + Partition tolerance)
+PostgreSQL → favors CA (Consistency + Availability) (not fully distributed)
+3. When to Use MongoDB over Relational DB
+ Scenario 1: Flexible Schema
+App where data structure changes frequently
+Example: User profiles with different fields
+ Scenario 2: High Scalability
+Large-scale apps (e.g., social media)
+Easy horizontal scaling
+Scenario 3: Nested / Hierarchical Data
+Example:
+{
+  "user": "A",
+  "orders": [
+    { "item": "Pizza", "price": 200 }
+  ]
+}
+
+Perfect for:
+
+Real-time apps
+Content management systems
+E-commerce catalogs
+4. Why MongoDB uses BSON instead of JSON
+ BSON = Binary JSON
+ Reasons:
+Faster processing → Binary format is efficient
+More data types → Supports Date, ObjectId, Binary, etc.
+Better performance → Faster encoding/decoding
+Compact storage → Optimized for machine use
+ Example:
+
+JSON cannot store:
+
+Date objects properly
+Binary data
+
+But BSON can:
+
+{ "createdAt": new Date() }
+5. MongoDB Query
+Task:
+
+Find students with:
+
+GPA > 3.5
+enrolled in "CS101"
+ Query:
+db.students.find({
+  gpa: { $gt: 3.5 },
+  courses: "CS101"
+});
+ Explanation:
+$gt → greater than
+"CS101" → matches inside array

@@ -1,0 +1,11 @@
+1. Stock Trading Platform → CP  
+Consistency + Partition tolerance (accuracy is critical)
+
+2. Content Delivery Network → AP  
+Availability + Partition tolerance (must always serve content)
+
+3. Airline Booking System → CP  
+Consistency (avoid double booking)
+
+4. Video Streaming Service → AP  
+Availability (slight inconsistency is acceptable)
